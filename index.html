@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #weather
+    {
+        display: flex;
+        justify-content: space-evenly;
+        width: 1000px;
+    }
+</style>
+<body>
+    <div id="head"> 
+        <h1>Daily Weather</h1>
+    </div>
+
+    <div id="search">
+        <input type="text" placeholder="Enter City" id="city">
+        <br>
+        <input type="submit" onclick="weather()">
+    </div>
+    <div id="weather">
+
+
+    </div>
+</body>
+</html>
+
+<script>
+    function weather()
+    {
+        let city = document.getElementById("city").value;
+        const url=`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=c8c152b04145ac1913c42df5f1e6e91c`
+        fetch(url)
+        .then(function(res)
+        {
+            return res.json();
+        })
+        .then(function(res)
+        {
+            console.log(res)
+            let l=res.coord;
+            let lat=l.lat;
+            let lon=l.lon;
+            console.log(l)
+            dailyWeather(lat,lon)
+        })
+    }
+
+    function dailyWeather(lat,lon)
+    {
+        const url1=`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&appid=c8c152b04145ac1913c42df5f1e6e91c`
+        fetch(url1)
+        .then(function(res)
+        {
+            return res.json();
+        })
+        .then(function(res)
+        {
+            let w=res.daily;
+            console.log(w)
+            console.log(res);
+            appendData(w);
+        })
+
+    }
+
+    function appendData(data)
+    {
+        let mainDiv=document.getElementById("weather");
+        data.forEach(function(e)
+        {
+            let div=document.createElement("div");
+
+            let t=document.createElement("h3");
+            t.innerText=` ${e.temp.day}`
+
+            
+          
+            let sunR=document.createElement("h3");
+            let riseT= new Date(e.sunrise).toLocaleTimeString("en-IN")
+            sunR.innerText=riseT;
+
+            let sunS=document.createElement("h3");
+            let setT= new Date(e.sunset).toLocaleTimeString("en-IN")
+            sunS.innerText=setT;
+
+            let hum=document.createElement("h3");
+            hum.innerText=e.humidity;
+
+            
+            div.append(t,sunR,sunS,hum);
+
+
+            mainDiv.append(div)
+            
+        })
+    }
+
+   
+</script>
